@@ -70,7 +70,7 @@ int destory()
     return 0;
 }
 
-static int save_stream(int fd, IMPEncoderStream *stream)
+static int save_stream(int fd, int fd_low, IMPEncoderStream *stream)
 {
     int ret, i, nr_pack = stream->packCount;
 
@@ -81,19 +81,19 @@ static int save_stream(int fd, IMPEncoderStream *stream)
         if (pack->length) {
             uint32_t sz = stream->streamSize - pack->offset;
             if (sz < pack->length) {
-                ret = write(fd, (void *) (stream->virAddr + pack->offset), sz);
+                ret = write(chn == 0 ? fd : fd_low, (void *) (stream->virAddr + pack->offset), sz);
                 if (ret != (ssize_t) sz) {
                     IMP_LOG_ERR(TAG, "stream write error:%s\n", strerror(errno));
                     return -1;
                 }
 
-                ret = write(fd, (void *) stream->virAddr, pack->length - sz);
+                ret = write(chn == 0 ? fd : fd_low, (void *) stream->virAddr, pack->length - sz);
                 if (ret != (ssize_t) (pack->length - sz)) {
                     IMP_LOG_ERR(TAG, "stream write error:%s\n", strerror(errno));
                     return -1;
                 }
             } else {
-                ret = write(fd, (void *) (stream->virAddr + pack->offset), pack->length);
+                ret = write(chn == 0 ? fd : fd_low, (void *) (stream->virAddr + pack->offset), pack->length);
                 if (ret != (ssize_t) pack->length) {
                     IMP_LOG_ERR(TAG, "stream write error:%s\n", strerror(errno));
                     return -1;
@@ -101,7 +101,7 @@ static int save_stream(int fd, IMPEncoderStream *stream)
             }
         }
 #else
-        ret = write(fd, (void *)stream->pack[i].virAddr, stream->pack[i].length);
+        ret = write(chn == 0 ? fd : fd_low, (void *)stream->pack[i].virAddr, stream->pack[i].length);
         if (ret != stream->pack[i].length) {
             IMP_LOG_ERR(TAG, "stream write error:%s\n", strerror(errno));
             return -1;
@@ -112,7 +112,7 @@ static int save_stream(int fd, IMPEncoderStream *stream)
     return 0;
 }
 
-static int get_h264_stream(int fd, int chn)
+static int get_h264_stream(int fd, int fd_low, int chn)
 {
     int ret;
 
@@ -128,7 +128,7 @@ static int get_h264_stream(int fd, int chn)
         return -1;
     }
 
-    ret = save_stream(fd, &stream);
+    ret = save_stream(fd, fd_low, &stream);
     if (ret < 0) {
         close(fd);
         return ret;
@@ -139,7 +139,7 @@ static int get_h264_stream(int fd, int chn)
     return 0;
 }
 
-int get_stream(int fd, int chn)
+int get_stream(int fd, int fd_low, int chn)
 {
     int  ret;
 
@@ -148,7 +148,7 @@ int get_stream(int fd, int chn)
         IMP_LOG_ERR(TAG, "IMP_Encoder_StartRecvPic(%d) failed\n", 1);
         return ret;
     }
-    ret = get_h264_stream(fd, chn);
+    ret = get_h264_stream(fd, fd_low, chn);
     if (ret < 0) {
         IMP_LOG_ERR(TAG, "Get H264 stream failed\n");
         return ret;

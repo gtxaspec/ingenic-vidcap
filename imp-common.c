@@ -958,12 +958,12 @@ int sample_osd_exit(IMPRgnHandle *prHander,int grpNum)
 }
 
 #if 0
-static int save_stream(int fd, IMPEncoderStream *stream)
+static int save_stream(int fd, int fd_low, IMPEncoderStream *stream)
 {
 	int ret, i, nr_pack = stream->packCount;
 
 	for (i = 0; i < nr_pack; i++) {
-		ret = write(fd, (void *)stream->pack[i].virAddr,
+		ret = write(chn == 0 ? fd : fd_low, (void *)stream->pack[i].virAddr,
 					stream->pack[i].length);
 		if (ret != stream->pack[i].length) {
 			IMP_LOG_ERR(TAG, "stream write error:%s\n", strerror(errno));
@@ -1475,4 +1475,3 @@ end:
 
 	return NULL;
 }
-

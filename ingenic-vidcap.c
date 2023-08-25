@@ -10,6 +10,7 @@
 #include "version.h"
 
 char const* inputVideoFileName = "/tmp/h264_fifo";
+char const* inputVideoFileNameLow = "/tmp/h264_fifo_low";
 char const* inputAudioFileName = "/tmp/g711_fifo";
 
 void displayUsage() {
@@ -56,19 +57,25 @@ int main(int argc, char** argv) {
         exit(1);
     }
     unlink(inputVideoFileName);
+    unlink(inputVideoFileNameLow);
 
     if (mkfifo(inputVideoFileName, 0777) < 0) {
         printf("mkfifo Failed\n");
         exit(1);
     }
+    if (mkfifo(inputVideoFileNameLow, 0777) < 0) {
+        printf("mkfifo Failed\n");
+        exit(1);
+    }
 
     int fd = open(inputVideoFileName, O_RDWR | O_CREAT | O_TRUNC, 0777);
+    int fd_low = open(inputVideoFileNameLow, O_RDWR | O_CREAT | O_TRUNC, 0777);
     if (fd < 0) {
         printf("Failed open fifo\n");
         exit(1);
     }
     while (1) {
-        if (get_stream(fd ,0) < 0) break; // Get stream and write to fifo.
+        if (get_stream(fd , fd_low,0) < 0) break; // Get stream and write to fifo.
     }
 
     return 0; // only to prevent compiler warning
