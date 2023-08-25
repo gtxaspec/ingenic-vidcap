@@ -1,11 +1,13 @@
 forked from:
 https://github.com/geekman/t20-rtspd
 
-Capture video and output to /tmp/h264_fifo
-use go2rtc:
+Capture video and output to /tmp/h264_fifo  
+use go2rtc:  
 ` - exec:cat /tmp/h264_fifo | tee`
 
-TO DO:
+tested on T31 w/gc2053 @30fps
+
+need help:
 
 Audio support
 

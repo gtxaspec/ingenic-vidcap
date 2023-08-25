@@ -162,7 +162,7 @@ int capture_and_encoding()
     int ret = 0;
     int i = 0;
 
-    printf(">>>>>caputre_and_encoding start\n");
+    printf("IMP: Capture and Encoding start...\n");
 
 #ifdef PLATFORM_T20L
     IMP_OSD_SetPoolSize(0x64000);

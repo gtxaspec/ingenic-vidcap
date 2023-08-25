@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <sys/types.h>  
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
@@ -9,10 +9,11 @@
 #include "capture_and_encoding.h"
 #include "version.h"
 
-char const* inputFileName = "/tmp/h264_fifo";
+char const* inputVideoFileName = "/tmp/h264_fifo";
+char const* inputAudioFileName = "/tmp/g711_fifo";
 
 void displayUsage() {
-    printf("usage: t20-rtspd [args...]\n\n"
+    printf("usage: ingenic-vidcap [args...]\n\n"
         " --help            display this help message\n"
         " --noir            do not turn on IR LEDs (for use behind glass)\n"
         " --flip            flips the image 180deg for ceiling mount\n"
@@ -21,7 +22,7 @@ void displayUsage() {
 }
 
 int main(int argc, char** argv) {
-    printf("my-carrier-server version: %s\n", VERSION);
+    printf("ingenic-vidcap version: %s\n", VERSION);
 
     // parse args
      int i;
@@ -54,18 +55,18 @@ int main(int argc, char** argv) {
         printf("unable to setup camera stream\n");
         exit(1);
     }
-    unlink(inputFileName);
+    unlink(inputVideoFileName);
 
-    if (mkfifo(inputFileName, 0777) < 0) {
+    if (mkfifo(inputVideoFileName, 0777) < 0) {
         printf("mkfifo Failed\n");
         exit(1);
     }
 
-    int fd = open(inputFileName, O_RDWR | O_CREAT | O_TRUNC, 0777);
+    int fd = open(inputVideoFileName, O_RDWR | O_CREAT | O_TRUNC, 0777);
     if (fd < 0) {
         printf("Failed open fifo\n");
         exit(1);
-    }   
+    }
     while (1) {
         if (get_stream(fd ,0) < 0) break; // Get stream and write to fifo.
     }
