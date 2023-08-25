@@ -18,6 +18,6 @@ Compilation
 
 2. Clone this repo
 
-3. Run the `make` command.
+3. Run the `make TARGET=wcv3` command (for t31 support)
    You should end up with the `ingenic-vidcap` binary in the directory.
 

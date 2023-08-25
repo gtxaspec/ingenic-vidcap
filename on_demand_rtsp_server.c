@@ -1,9 +1,9 @@
-#include <cstdio>
+#include <stdio.h>
 #include <sys/types.h>  
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <cstring>
-#include <cstdlib>
+#include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
  
 #include "capture_and_encoding.h"
@@ -24,7 +24,8 @@ int main(int argc, char** argv) {
     printf("my-carrier-server version: %s\n", VERSION);
 
     // parse args
-    for (int i = 1; i < argc; i++) {
+     int i;
+      for (i = 0; i < argc; i++) {
         char *arg = argv[i];
 
         if (*arg == '-') {

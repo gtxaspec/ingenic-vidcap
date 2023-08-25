@@ -15,7 +15,7 @@ CPP 		 =           cpp
 CPLUSPLUS_COMPILER =	$(CROSS_COMPILE)g++
 CPLUSPLUS_FLAGS =   $(COMPILE_OPTS) -Wall -DBSD=1 $(CPPFLAGS) $(CXXFLAGS)
 OBJ 		 =           o
-LINK 		 =  $(CROSS_COMPILE)g++ -o
+LINK 		 =  $(CROSS_COMPILE)gcc -o
 LINK_OPTS    =  -lpthread -lm -lrt -ldl -static
 CONSOLE_LINK_OPTS = $(LINK_OPTS)
 LINK_OBJ	 = pwm.o imp-common.o capture_and_encoding.o on_demand_rtsp_server.o
