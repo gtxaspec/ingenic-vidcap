@@ -1,17 +1,17 @@
-#include <string.h>    
-#include <errno.h>      
-
+#include <string.h>
+#include <errno.h>
 #include <imp/imp_isp.h>
 #include <imp/imp_system.h>
 #include <imp/imp_log.h>
 #include <imp/imp_framesource.h>
+
 #ifdef PLATFORM_T31
   #include <imp/imp_encoder_t31.h>
 #else
   #include <imp/imp_encoder.h>
 #endif
 
-#include "imp-common.h" 
+#include "imp-common.h"
 #include "capture_and_encoding.h"
 
 #define TAG "capture_and_encoding"

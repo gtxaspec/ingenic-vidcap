@@ -1,16 +1,13 @@
-INCLUDES 	 = -I./include/live555/usageEnvironment/ -I./include/live555/groupsock/ \
-				-I./include/live555/liveMedia/ -I./include/live555/basicUsageEnvironment \
-				-I./include/imp_sys
-LIVE555_LIBS =  ./lib/livelib/libliveMedia.a ./lib/livelib/libgroupsock.a \
-				./lib/livelib/libBasicUsageEnvironment.a ./lib/livelib/libUsageEnvironment.a
+INCLUDES 	 = -I./include/imp_sys
 SDK_LIB_DIR	=  ./lib/imp_sys/uclibc
-IMP_LIBS	= $(SDK_LIB_DIR)/libimp.so $(SDK_LIB_DIR)/libalog.so
-LIBS	=  $(LIVE555_LIBS) $(IMP_LIBS)
+IMP_LIBS	= $(SDK_LIB_DIR)/libimp.a $(SDK_LIB_DIR)/libalog.a
+LIBS	=  $(IMP_LIBS)
 
 CROSS_COMPILE?= mips-linux-uclibc-gnu-
 
 STRIP        = $(CROSS_COMPILE)strip
-COMPILE_OPTS =      $(INCLUDES) -I. -O2 -Wall -march=mips32r2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DLOCALE_NOT_USED -g
+COMPILE_OPTS =      $(INCLUDES) -I. -O2 -Wall -march=mips32r2 -DSOCKLEN_T=socklen_t -g
+#COMPILE_OPTS =      $(INCLUDES) -I. -O2 -Wall -march=mips32r2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DLOCALE_NOT_USED -g
 C 			 =         c
 C_COMPILER   =	$(CROSS_COMPILE)gcc
 C_FLAGS 	 =       $(COMPILE_OPTS) $(CPPFLAGS) $(CFLAGS)
@@ -19,13 +16,12 @@ CPLUSPLUS_COMPILER =	$(CROSS_COMPILE)g++
 CPLUSPLUS_FLAGS =   $(COMPILE_OPTS) -Wall -DBSD=1 $(CPPFLAGS) $(CXXFLAGS)
 OBJ 		 =           o
 LINK 		 =  $(CROSS_COMPILE)g++ -o
-#LINK_OPTS    =  -ldl  -lm -lpthread -ldl -g
-LINK_OPTS    =  -lpthread -lm -lrt -ldl
+LINK_OPTS    =  -lpthread -lm -lrt -ldl -static
 CONSOLE_LINK_OPTS = $(LINK_OPTS)
 LINK_OBJ	 = pwm.o imp-common.o capture_and_encoding.o on_demand_rtsp_server.o
 
 ifeq ($(TARGET),wcv3)
-	COMPILE_OPTS += -DSENSOR_GC2053 -DSENSOR_FRAME_RATE_NUM=20 \
+	COMPILE_OPTS += -DSENSOR_GC2053 -DSENSOR_FRAME_RATE_NUM=30 \
 					-DIRCUT_EN_GPIO=53 -DIRCUT_DIS_GPIO=52 \
 					-DEXP_NIGHT_THRESHOLD=30000 -DEXP_DAY_THRESHOLD=5900 -DEXP_IR_THRESHOLD=30000
 
@@ -39,7 +35,7 @@ else
 	COMPILE_OPTS += -DPLATFORM_T20L
 endif
 
-APP = t20-rtspd
+APP = ingenic-vidcap
 
 commit_tag=$(shell git rev-parse --short HEAD)
 .PHONY:all
