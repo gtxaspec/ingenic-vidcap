@@ -18,7 +18,7 @@ OBJ 		 =           o
 LINK 		 =  $(CROSS_COMPILE)gcc -o
 LINK_OPTS    =  -lpthread -lm -lrt -ldl -static
 CONSOLE_LINK_OPTS = $(LINK_OPTS)
-LINK_OBJ	 = pwm.o imp-common.o capture_and_encoding.o on_demand_rtsp_server.o
+LINK_OBJ	 = pwm.o imp-common.o capture_and_encoding.o ingenic-vidcap.o
 
 ifeq ($(TARGET),wcv3)
 	COMPILE_OPTS += -DSENSOR_GC2053 -DSENSOR_FRAME_RATE_NUM=30 \
