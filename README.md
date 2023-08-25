@@ -9,6 +9,7 @@ tested on T31 w/gc2053 @30fps
 
 need help:
 
+low-res video stream
 Audio support
 
 Compilation

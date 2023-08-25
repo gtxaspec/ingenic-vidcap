@@ -159,8 +159,8 @@ extern "C"
 #define SENSOR_WIDTH			1920
 #define SENSOR_HEIGHT			1080
 #define CHN0_EN                 1
-#define CHN1_EN                 0
-#define CROP_EN					0
+#define CHN1_EN                 1
+#define CROP_EN			0
 #endif
 
 #define SENSOR_WIDTH_SECOND		640
