@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
+#include <errno.h>  // Include for the errno variable
 
 #include "capture_and_encoding.h"
 #include "version.h"
@@ -58,6 +59,8 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+    printf("Camera stream setup successfully.\n");
+
     // Setup TCP server
     int server_socket, client_socket;
     struct sockaddr_in server_addr, client_addr;
@@ -71,6 +74,7 @@ int main(int argc, char** argv) {
 
     int opt_val = 1;
     setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &opt_val, sizeof(opt_val));
+    setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val));
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_PORT);
@@ -93,24 +97,23 @@ int main(int argc, char** argv) {
         client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &addr_len);
         if (client_socket == -1) {
             perror("Accept failed");
-            continue; // Go back to waiting for another client if accept() failed
+            continue;
         }
         printf("Client connected.\n");
 
-        // Reduce buffering for the accepted client socket
-        setsockopt(client_socket, IPPROTO_TCP, TCP_NODELAY, &opt_val, sizeof(opt_val));
-        int bufferSize = BUFFER_SIZE;
-        setsockopt(client_socket, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize));
-
         while (1) {
-            if (get_stream(client_socket, 0) < 0) break; // Get stream and send to client.
+            int result = get_stream(client_socket, 0);
+            if (result < 0) {
+                perror("Error in get_stream");  // This will also display the error associated with errno
+                printf("get_stream returned: %d, errno: %d\n", result, errno);
+                break;
+            }
         }
 
         close(client_socket);
         printf("Client disconnected.\n");
     }
 
-    close(server_socket); // This might never be reached due to the infinite loop, but it's good practice to have it.
-
+    close(server_socket);
     return 0;
 }
