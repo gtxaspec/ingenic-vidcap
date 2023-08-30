@@ -13,7 +13,7 @@
 #include "version.h"
 
 #define SERVER_PORT 8080
-#define BUFFER_SIZE 4096  // 4 KB
+#define BUFFER_SIZE 128  // 4 KB
 
 void displayUsage() {
     printf("usage: ingenic-vidcap [args...]\n\n"
@@ -76,6 +76,9 @@ int main(int argc, char** argv) {
     setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &opt_val, sizeof(opt_val));
     setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val));
 
+    int sendbuff = 2 * BUFFER_SIZE;
+    setsockopt(server_socket, SOL_SOCKET, SO_SNDBUF, &sendbuff, sizeof(sendbuff));
+
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_PORT);
     server_addr.sin_addr.s_addr = INADDR_ANY;
@@ -110,8 +113,15 @@ int main(int argc, char** argv) {
             }
         }
 
-        close(client_socket);
-        printf("Client disconnected.\n");
+    if (client_socket != -1 && close(client_socket) == -1) {
+        perror("Failed to close client socket");
+    } else {
+        client_socket = -1;  // Invalidate the socket descriptor after closing
+    }
+    printf("Client disconnected.\n");
+
+    usleep(50000);  // Introduce a small delay (50ms) before accepting a new connection
+
     }
 
     close(server_socket);
