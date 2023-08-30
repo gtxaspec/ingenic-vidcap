@@ -27,7 +27,7 @@ ifeq ($(TARGET),wcv3)
 
 	# T31 changes
 	COMPILE_OPTS += -DPLATFORM_T31
-	IMP_LIBS := $(IMP_LIBS:libimp.so=t31/libimp.so)
+	IMP_LIBS := $(IMP_LIBS:libimp.a=t31/libimp.a)
 else
 	COMPILE_OPTS += -DSENSOR_JXF23 -DSENSOR_FRAME_RATE_NUM=15 \
 					-DIRCUT_EN_GPIO=25 -DIRCUT_DIS_GPIO=26 \
