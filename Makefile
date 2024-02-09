@@ -3,7 +3,7 @@ SDK_LIB_DIR	=  ./lib/imp_sys/uclibc
 IMP_LIBS	= $(SDK_LIB_DIR)/libimp.a $(SDK_LIB_DIR)/libalog.a
 LIBS	=  $(IMP_LIBS)
 
-CROSS_COMPILE?= mips-linux-uclibc-gnu-
+CROSS_COMPILE?= mipsel-openipc-linux-musl-
 
 STRIP        = $(CROSS_COMPILE)strip
 COMPILE_OPTS =      $(INCLUDES) -I. -O2 -Wall -march=mips32r2 -DSOCKLEN_T=socklen_t -g
@@ -18,7 +18,7 @@ OBJ 		 =           o
 LINK 		 =  $(CROSS_COMPILE)gcc -o
 LINK_OPTS    =  -lpthread -lm -lrt -ldl -static
 CONSOLE_LINK_OPTS = $(LINK_OPTS)
-LINK_OBJ	 = pwm.o imp-common.o capture_and_encoding.o ingenic-vidcap.o
+LINK_OBJ	 = pwm.o imp-common.o capture_and_encoding.o ingenic-vidcap.o musl_shim.o
 
 ifeq ($(TARGET),wcv3)
 	COMPILE_OPTS += -DSENSOR_GC2053 -DSENSOR_FRAME_RATE_NUM=30 \
@@ -54,7 +54,6 @@ $(APP):
 $(APP): $(LINK_OBJ)
 	$(LINK)$@  $(LINK_OBJ)  $(LIBS) $(CONSOLE_LINK_OPTS)
 	$(STRIP) -s $@
-	cp $(APP) ~/tftproot/
 
 clean:
 	-rm -rf *.$(OBJ) $(APP) core *.core *~ include/*~ version.h
